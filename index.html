@@ -1,0 +1,31 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="source/style.css">
+	<script type="text/javascript" src="source/dragndrop.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function(){
+		droppable.config({
+			filename: "file",
+			inputname: "photos[]",
+			url: "save.php",
+			dropzone: "droppable",
+			statusbar: "droppable_progress_bar",
+			textinput: "droppable_trigger_input",
+		});
+	});
+	</script>
+</head>
+<body>
+	<div id="progress_wrap">
+		<span id="droppable_progress_bar"></span>
+	</div>
+	<div id="droppable">
+		<div id="previews"></div>
+		<h3 id="droppable_title">Presuňte súbory</h3>
+		<p id="droppable_trigger_input">Kliknite pre výber</p>
+		<div id="droppable_inputs"></div>
+	</div>
+</body>
+</html>
