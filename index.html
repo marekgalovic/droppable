@@ -9,11 +9,19 @@
 		droppable.config({
 			filename: "file",
 			inputname: "photos[]",
-			url: "save.php",
+			uploadurl: "save.php",
+			deleteurl: "delete.php",
 			dropzone: "droppable",
 			statusbar: "droppable_progress_bar",
 			textinput: "droppable_trigger_input",
 		});
+		/*
+		droppable.load([
+			{path: "file.png", name: "file.pngasdfasd fasdf asdf asdf asf d asdf asf asdf asdf asdf asdf a"},
+			{path: "file.png", name: "file.png"},
+			{path: "file.png", name: "file.png"},
+			{path: "file.png", name: "file.png"},
+		]); */
 	});
 	</script>
 </head>

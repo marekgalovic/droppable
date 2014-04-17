@@ -5,9 +5,11 @@ function Droppable(){
 	this.inputName;
 	this.dbInputName;
 	this.url;
+	this.deleteurl;
 	this.inputTrigger;
 	this.toTrigger;
 	this.success = false;
+	this.uploaded = {};
 }
 
 Droppable.prototype.config = function(data){
@@ -16,8 +18,11 @@ Droppable.prototype.config = function(data){
 	this.totalWidth = this.progressBar.parentNode.offsetWidth;
 	this.inputName = data.filename;
 	this.dbInputName = data.inputname;
-	this.url = data.url;
+	this.url = data.uploadurl;
+	this.deleteurl = data.deleteurl;
 	this.inputTrigger = data.textinput;
+	//load uploaded
+	this.uploaded = data.uploaded;
 	//cal init functions
 	this.preventZone();
 	this.appendInput();
@@ -41,6 +46,24 @@ Droppable.prototype.handleInput = function(){
 	});
 }
 
+Droppable.prototype.handleDelete = function(filePath){
+	xhr = new XMLHttpRequest;
+	var path = new FormData();
+	path.append("path", filePath);
+	xhr.upload.addEventListener("progress", function(e){
+		droppable.setProgress(e.loaded, e.total);
+	});
+	xhr.onreadystatechange = function(){
+		if(xhr.readyState == 4 && xhr.status == 200){
+			droppable.removePreview(filePath);
+		}else{
+		}
+	}
+	xhr.open("POST", this.deleteurl);
+	xhr.send(path);
+
+}
+
 Droppable.prototype.preventZone = function(){
 	this.dropzone.addEventListener("dragenter", function(e){
 		e.stopPropagation();
@@ -60,9 +83,8 @@ Droppable.prototype.preventZone = function(){
 Droppable.prototype.setProgress = function(loaded, total){
 	var percent = Math.ceil((loaded / total) * 100);
 	this.progressBar.style.width = ((percent / 100) * this.totalWidth);
-	console.log(percent);
 	if(percent == 100){
-		setTimeout(function(){droppable.progressBar.style.width = 0;}, 1000);
+		setTimeout(function(){droppable.progressBar.style.width = 0;}, 500);
 		this.success = true;	
 	}else{
 
@@ -83,7 +105,7 @@ Droppable.prototype.uploadFile = function(file){
 		droppable.setProgress(e.loaded, e.total);
 	});
 	xhr.onreadystatechange = function(){
-		if(xhr.readyState == 4){
+		if(xhr.readyState == 4 && xhr.status == 200){
 			//success
 			droppable.appendUploaded(JSON.parse(xhr.responseText));
 		}else{
@@ -98,6 +120,7 @@ Droppable.prototype.appendUploaded = function(data){
 	//basic div
 	var append = document.createElement("div");
 	append.setAttribute("class","droppable_preview");
+	append.setAttribute("id", data.path);
 	var preview = document.getElementById("previews").appendChild(append);
 	//img container
 	var append_wrap = document.createElement("div");
@@ -115,10 +138,40 @@ Droppable.prototype.appendUploaded = function(data){
 	preview.appendChild(append);
 	//inputs to send
 	append = document.createElement("input");
+	append.setAttribute("id", "droppable_input_"+data.path);
 	append.setAttribute("type", "hidden");
 	append.setAttribute("value", data.path);
 	append.setAttribute("name", this.dbInputName);
-	document.getElementById("droppable_inputs").appendChild(append); 
+	document.getElementById("droppable_inputs").appendChild(append);
+	//delete link
+	append = document.createElement("a");
+	text = document.createTextNode("Zmazať");
+	append.setAttribute("href", "");
+	append.setAttribute("data-path", data.path);
+	append.setAttribute("class", "droppable_delete");
+	append.onclick = function(e){
+		e.preventDefault();
+		droppable.handleDelete(this.getAttribute("data-path"));
+	}
+	append.appendChild(text);
+	preview.appendChild(append);
+}
+
+Droppable.prototype.removePreview = function(id){
+	this.removeDbInput(id);
+	var element = document.getElementById(id);
+	element.remove();
+}
+
+Droppable.prototype.removeDbInput = function(id){
+	var element = document.getElementById("droppable_input_"+id);
+	element.remove();	
+}
+
+Droppable.prototype.load = function(data){
+	for(i=0;i<data.length;i++){
+		this.appendUploaded(data[i]);
+	}
 }
 
 droppable = new Droppable();
