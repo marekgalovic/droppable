@@ -56,6 +56,7 @@ Droppable.prototype.handleDelete = function(filePath){
 	xhr.onreadystatechange = function(){
 		if(xhr.readyState == 4 && xhr.status == 200){
 			droppable.removePreview(filePath);
+			console.log(xhr.responseText);
 		}else{
 		}
 	}
@@ -108,6 +109,7 @@ Droppable.prototype.uploadFile = function(file){
 		if(xhr.readyState == 4 && xhr.status == 200){
 			//success
 			droppable.appendUploaded(JSON.parse(xhr.responseText));
+			console.log(xhr.responseText);
 		}else{
 			//error occured
 		}
@@ -120,7 +122,7 @@ Droppable.prototype.appendUploaded = function(data){
 	//basic div
 	var append = document.createElement("div");
 	append.setAttribute("class","droppable_preview");
-	append.setAttribute("id", data.path);
+	append.setAttribute("id", data.name);
 	var preview = document.getElementById("previews").appendChild(append);
 	//img container
 	var append_wrap = document.createElement("div");
@@ -138,7 +140,7 @@ Droppable.prototype.appendUploaded = function(data){
 	preview.appendChild(append);
 	//inputs to send
 	append = document.createElement("input");
-	append.setAttribute("id", "droppable_input_"+data.path);
+	append.setAttribute("id", "droppable_input_"+data.name);
 	append.setAttribute("type", "hidden");
 	append.setAttribute("value", data.path);
 	append.setAttribute("name", this.dbInputName);
@@ -147,11 +149,11 @@ Droppable.prototype.appendUploaded = function(data){
 	append = document.createElement("a");
 	text = document.createTextNode("Zmazať");
 	append.setAttribute("href", "");
-	append.setAttribute("data-path", data.path);
+	append.setAttribute("data-name", data.name);
 	append.setAttribute("class", "droppable_delete");
 	append.onclick = function(e){
 		e.preventDefault();
-		droppable.handleDelete(this.getAttribute("data-path"));
+		droppable.handleDelete(this.getAttribute("data-name"));
 	}
 	append.appendChild(text);
 	preview.appendChild(append);
