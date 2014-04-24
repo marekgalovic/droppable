@@ -1,3 +1,3 @@
 <?php
-echo $_POST["path"];
+	echo $_POST["path"];
 ?>

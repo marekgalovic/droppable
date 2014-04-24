@@ -14,8 +14,10 @@ function Droppable(){
 
 Droppable.prototype.config = function(data){
 	this.dropzone = document.getElementById(data.dropzone);
-	this.progressBar = document.getElementById(data.statusbar);
-	this.totalWidth = this.progressBar.parentNode.offsetWidth;
+	if(data.statusbar == ""){
+		this.progressBar = document.getElementById(data.statusbar);
+		this.totalWidth = this.progressBar.parentNode.offsetWidth;
+	}	
 	this.inputName = data.filename;
 	this.dbInputName = data.inputname;
 	this.url = data.uploadurl;
@@ -103,7 +105,10 @@ Droppable.prototype.uploadFile = function(file){
 	data.append(this.inputName, file);
 	var xhr = new XMLHttpRequest();
 	xhr.upload.addEventListener("progress", function(e){
-		droppable.setProgress(e.loaded, e.total);
+		if(droppable.statusbar == ""){}
+		else{
+			droppable.setProgress(e.loaded, e.total);
+		}
 	});
 	xhr.onreadystatechange = function(){
 		if(xhr.readyState == 4 && xhr.status == 200){
